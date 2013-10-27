@@ -1,0 +1,8 @@
+E:\MyDocument\Dropbox\NetBeansProjects\AviationController2\AviationController2\bin\Debug\AviationController2.exe.config
+E:\MyDocument\Dropbox\NetBeansProjects\AviationController2\AviationController2\bin\Debug\AviationController2.exe
+E:\MyDocument\Dropbox\NetBeansProjects\AviationController2\AviationController2\bin\Debug\AviationController2.pdb
+E:\MyDocument\Dropbox\NetBeansProjects\AviationController2\AviationController2\obj\Debug\AviationController2.AviationController.resources
+E:\MyDocument\Dropbox\NetBeansProjects\AviationController2\AviationController2\obj\Debug\AviationController2.Properties.Resources.resources
+E:\MyDocument\Dropbox\NetBeansProjects\AviationController2\AviationController2\obj\Debug\AviationController2.csproj.GenerateResource.Cache
+E:\MyDocument\Dropbox\NetBeansProjects\AviationController2\AviationController2\obj\Debug\AviationController2.exe
+E:\MyDocument\Dropbox\NetBeansProjects\AviationController2\AviationController2\obj\Debug\AviationController2.pdb
