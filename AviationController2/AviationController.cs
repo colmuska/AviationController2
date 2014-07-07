@@ -11,6 +11,8 @@ using System.IO.Ports;
 using System.IO;
 using System.Threading;
 
+using OpenCvSharp;
+
 namespace AviationController2
 {
     public partial class AviationController : Form
@@ -26,14 +28,17 @@ namespace AviationController2
         List<double>[] pos;
         List<double>[] speed;
         List<double>[] gpsPos;
-        double pitch;
-        double heading;
-        double role;
+        double degPitch;
+        double degHeading;
+        double degRole;
 
         object syncObject = new object();
 
         static int LIST_LENGTH_LIMIT=10000;   //100Hz * 10 min
         static int LOG_TEXT_LINE_LENGTH_LIMIT = 10000;
+
+        CvLib cvLib;
+
 
         public AviationController()
         {
@@ -56,8 +61,6 @@ namespace AviationController2
                 gpsPos[i] = new List<double>();
             }
 
-
-
         }
 
         private void AviationController_Load(object sender, EventArgs e)
@@ -78,7 +81,8 @@ namespace AviationController2
             {
                 comboBoxSerialPort.SelectedIndex = 0;
             }
-            
+            //cvLib = new CvLib();
+
         }
 
         private void updateSerialPortSelector()
@@ -120,7 +124,7 @@ namespace AviationController2
         {
             trackBarJoyPitch.Value = 255 - joypadController.getPitch();
             trackBarJoyRole.Value = joypadController.getRole();
-            trackBarJoyYaw.Value = 255 - joypadController.getYaw();
+            trackBarJoyYaw.Value =  255 - joypadController.getYaw();
             trackBarJoyThrottle.Value = joypadController.getThrottle();
             trackBarJoyFlaps.Value = joypadController.getFlaps();
         }
@@ -129,18 +133,56 @@ namespace AviationController2
         {
             if (serialPort1.IsOpen)
             {
-                int pitch = joypadController.getPitch();
+                int pitch = 255 - joypadController.getPitch();
                 int role = joypadController.getRole();
-                int yaw = joypadController.getYaw();
+                int yaw = 255 - joypadController.getYaw();
                 int throttle = joypadController.getThrottle();
                 int flaps = joypadController.getFlaps();
 
-                serialPort1.Write("setservo "+pitch.ToString("x2")+","+role.ToString("x2")+","
-                    +yaw.ToString("x2")+","+throttle.ToString("x2")+","+flaps.ToString("x2")+"\r");
+                if (cvLib != null)
+                {
+                    double gain = 2.0;
+                    double[] offset = cvLib.getTargetOffset();
+
+                    pitch -= (int)(offset[0]*gain);
+                    role -= (int)(offset[1] * gain);
+
+                    Console.WriteLine(role);
+
+                    if (pitch < 0)
+                    {
+                        pitch = 0;
+                    }
+                    else if (pitch > 255)
+                    {
+                        pitch = 255;
+                    }
+                    if (role < 0)
+                    {
+                        role = 0;
+                    }
+                    else if (role > 255)
+                    {
+                        role = 255;
+                    }
+
+                    
+
+
+                }
+
+                serialPort1.Write("setservo " + pitch.ToString("x2") + "," + role.ToString("x2") + ","
+                    + yaw.ToString("x2") + "," + throttle.ToString("x2") + "," + flaps.ToString("x2") + "\n");
+                /*serialPort1.Write("setservo "+pitch.ToString("x2")+","+role.ToString("x2")+","
+                    +yaw.ToString("x2")+","+throttle.ToString                                                                                                                                                                                                                                                                                                                                                                                                                                              ("x2")+","+flaps.ToString("x2")+"\n");*/
             }
         }
 
+        private void cvJoyState()
+        {
+            
 
+        }
 
         private void toolStripContainer1_ContentPanel_Load(object sender, EventArgs e)
         {
@@ -153,7 +195,7 @@ namespace AviationController2
 
             updateJoyView();
             sendJoyState();
-
+            cvJoyState();
         }
 
         /// <summary>
@@ -208,36 +250,27 @@ namespace AviationController2
 
         private void decodeLine(string line)
         {
+            if( line.IndexOf("$GIFUL,") == -1){
+                return;
+            }
 
             line = System.Text.RegularExpressions.Regex.Replace(line, "[^\\-\\.0-9,]", "");
             string[] splited = line.Split(',');
 
-            if (splited.Length == 19)//heading,pitch,role,aclX,aclY,aclZ,gyroX,gyroY,gyroZ,cmpsX,cmpsY,cmpsZ,spdX,spdY,spdZ,posX,posY,posZ,
+
+            Thread.Sleep(100);
+            if (splited.Length == 24)//$GIFUL,time,heading,pitch,role,aclX,aclY,aclZ,gyroX,gyroY,gyroZ,cmpsX,cmpsY,cmpsZ,spdX,spdY,spdZ,posX,posY,posZ,gpsPosX,gpsPosY,prsHeight
             {
-                pitch=double.Parse(splited[1]);
-                role = double.Parse(splited[2]);
-                heading=double.Parse(splited[0]);
+                Console.WriteLine(line);
+                degPitch=double.Parse(splited[3]);
+                degRole = double.Parse(splited[4]);
+                degHeading=double.Parse(splited[2]);
 
                 for (int i = 0; i < 3; i++)
                 {
-                    pos[i].Add(double.Parse(splited[15 + i]));
-                    speed[i].Add(double.Parse(splited[12 + i]));
+                    pos[i].Add(double.Parse(splited[17 + i]));
+                    speed[i].Add(double.Parse(splited[14 + i]));
                 }
-            }
-            else if (splited.Length == 21)
-            {
-                pitch = double.Parse(splited[1]);
-                role = double.Parse(splited[2]);
-                heading = double.Parse(splited[0]);
-
-                for (int i = 0; i < 3; i++)
-                {
-                    pos[i].Add(double.Parse(splited[15 + i]));
-                    speed[i].Add(double.Parse(splited[12 + i]));
-                }
-                gpsPos[0].Add(double.Parse(splited[18]));
-                gpsPos[1].Add(double.Parse(splited[19]));
-                gpsPos[2].Add(double.Parse(splited[19]));
             }
 
             if (LIST_LENGTH_LIMIT < pos[0].Count)
@@ -265,6 +298,10 @@ namespace AviationController2
                 BeginInvoke(new textBoxRemoveDelegate(logTextBox.Clear), null);
             }
             decodeLine(line);
+            if (cvLib != null)
+            {
+                cvLib.decodeLine(line);
+            }
 
             updateView();
         }
@@ -299,7 +336,7 @@ namespace AviationController2
                 {
                     if (serialPort1.IsOpen)
                     {
-                        serialPort1.Write(commandTextBox.Text + "\r");
+                        serialPort1.Write(commandTextBox.Text + "\n");
                     }
                 }
 
@@ -486,6 +523,11 @@ namespace AviationController2
 
         private void paintSpeedPlot(Pen pen, PaintEventArgs e, double speedX, double speedY, double scaleX, double scaleY, int offsetX, int offsetY)
         {
+            if (tabControl1.SelectedIndex != 1)
+            {
+                return;
+            }
+
             //X,Y are in screen coordinate
             Graphics g = e.Graphics;
 
@@ -500,6 +542,11 @@ namespace AviationController2
         }
         private void paintAttitudePlot(Pen pen, PaintEventArgs e, double degDirection, int offsetX, int offsetY)
         {
+            if (tabControl1.SelectedIndex != 1)
+            {
+                return;
+            }
+
             Graphics g = e.Graphics;
 
             int width = e.ClipRectangle.Width;
@@ -511,6 +558,11 @@ namespace AviationController2
 
         private void paintPositionPlot(Pen pen,PaintEventArgs e,List<double> sourceX,List<double> sourceY,List<double> speedX,List<double>speedY,double scaleX,double scaleY,int offsetX,int offsetY)
         {
+            if (tabControl1.SelectedIndex != 1)
+            {
+                return;
+            }
+
             //X,Y are in screen coordinate.
 
             int width = e.ClipRectangle.Width;
@@ -582,21 +634,24 @@ namespace AviationController2
 
         private void pictureBoxPositionLogXY_Paint(object sender, PaintEventArgs e)
         {
+            if (tabControl1.SelectedIndex != 1)
+            {
+                return;
+            }
             //X,Y are in earth frame.
             //X = north, Y = west
 
-            int offsetX = e.ClipRectangle.Width /2 ;
+            int offsetX = e.ClipRectangle.Width / 2;
             int offsetY = e.ClipRectangle.Height / 2;
 
             double scale = getGpsScale(comboBoxScaleXY);
 
             double multiplierX = e.ClipRectangle.Width / 2 / scale;
-            double multiplierY = - e.ClipRectangle.Height / 2 / scale;
+            double multiplierY = -e.ClipRectangle.Height / 2 / scale;
 
-            paintPositionPlot(Pens.Black,e, pos[1], pos[0], speed[1], speed[0], multiplierY, multiplierX, offsetY, offsetX);
+            paintPositionPlot(Pens.Black, e, pos[1], pos[0], speed[1], speed[0], multiplierY, multiplierX, offsetY, offsetX);
 
-            paintPositionPlot(Pens.Green,e,gpsPos[1], gpsPos[0], speed[1], speed[0], multiplierY, multiplierX, offsetY, offsetX);
-
+            paintPositionPlot(Pens.Green, e, gpsPos[1], gpsPos[0], speed[1], speed[0], multiplierY, multiplierX, offsetY, offsetX); 
         }
         private void pictureBoxPositionLogYZ_Paint(object sender, PaintEventArgs e)
         {
@@ -625,7 +680,6 @@ namespace AviationController2
             if (speed[0].Count != 0)
             {
                 paintSpeedPlot(Pens.Red, e, speed[1][speed[1].Count - 1], speed[0][speed[0].Count - 1], -10, 10, offsetY, offsetX);
-                paintAttitudePlot(Pens.Green, e, heading , offsetX, offsetY);
             }
         }
 
@@ -657,9 +711,9 @@ namespace AviationController2
             {
                 double horizontalSpeed = Math.Sqrt(speed[1][speed[1].Count - 1] * speed[1][speed[1].Count - 1] + speed[0][speed[0].Count - 1] * speed[0][speed[0].Count - 1]);
                 paintSpeedPlot(Pens.Red, e,-horizontalSpeed, speed[2][speed[2].Count - 1], -10, 10, offsetY, offsetZ);
-                paintAttitudePlot(Pens.Green, e, -pitch-90, offsetY, offsetZ);
+                paintAttitudePlot(Pens.Green, e, -degPitch-90, offsetY, offsetZ);
 
-                labelAoa.Text = "AOA: " + (pitch + Math.Atan2(speed[2][speed[2].Count - 1], horizontalSpeed) * 180 / Math.PI).ToString("F3") + "deg";
+                labelAoa.Text = "AOA: " + (degPitch + Math.Atan2(speed[2][speed[2].Count - 1], horizontalSpeed) * 180 / Math.PI).ToString("F3") + "deg";
 
 
             }
@@ -669,7 +723,7 @@ namespace AviationController2
         {
             if (serialPort1.IsOpen)
             {
-                serialPort1.Write("reset inu\r");
+                serialPort1.Write("reset inu\n");
                 clearLog();
                 Thread.Sleep(100);
                 
@@ -683,7 +737,7 @@ namespace AviationController2
         {
             if (serialPort1.IsOpen)
             {
-                serialPort1.Write("print attitude\r");
+                serialPort1.Write("print attitude\n");
             }
         }
 
@@ -691,22 +745,36 @@ namespace AviationController2
         {
             if (serialPort1.IsOpen)
             {
-                serialPort1.Write("print attitude earthframe\r");
+                serialPort1.Write("print attitude earthframe\n");
             }
         }
 
+        private void cameraTimer_Tick(object sender, EventArgs e)
+        {
+        }
+
+        protected void panel4Paint(object sender, PaintEventArgs e)
+        {
+            //InstrumentsPanelLib.paintTriAxisPanel(sender, e, 1, 1, 1, 1, 1, 1);
+            InstrumentsPanelLib.paintRingPanel(sender,e,"pitch",Image.FromFile("Resources/pitchBack.png"),Image.FromFile("Resources/pitchFront.png"),degPitch );
 
 
+        }
 
+        private void pictureBoxPositionLogXY_Click(object sender, EventArgs e)
+        {
 
+        }
 
+        private void panel5_Paint(object sender, PaintEventArgs e)
+        {
+            InstrumentsPanelLib.paintRingPanel(sender, e, "role", Image.FromFile("Resources/roleBack.png"), Image.FromFile("Resources/roleFront.png"), degRole);
+        }
 
-
-
-
-
-
-
+        private void panel6_Paint(object sender, PaintEventArgs e)
+        {
+            InstrumentsPanelLib.paintRingPanel(sender, e, "heading", Image.FromFile("Resources/headingBack.png"), Image.FromFile("Resources/headingFront.png"), degHeading);
+        }
 
     }
 }

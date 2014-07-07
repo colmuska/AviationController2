@@ -140,7 +140,14 @@ namespace AviationController2
 
         public int getFlaps()//0 to 255
         {
-            return flaps;
+            //return flaps;
+            return state.Rz / 256;                          //modified temporaly
+        }
+
+        public byte getButton(int i)
+        {
+            state = joypad.CurrentJoystickState;
+            return state.GetButtons()[i];
         }
     }
 

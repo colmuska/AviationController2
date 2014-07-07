@@ -96,6 +96,38 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Windows\Microsoft.NET\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.DirectInput.dll</HintPath>
     </Reference>
+    <Reference Include="OpenCvSharp, Version=2.0.4666.42387, Culture=neutral, PublicKeyToken=6adad1e807fea099, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\workingFolder\OpenCV\OpenCvSharp-2.4.5-x86-20131203\OpenCvSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenCvSharp.Blob, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6adad1e807fea099, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\workingFolder\OpenCV\OpenCvSharp-2.4.5-x86-20131203\OpenCvSharp.Blob.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenCvSharp.CPlusPlus, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6adad1e807fea099, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\workingFolder\OpenCV\OpenCvSharp-2.4.5-x86-20131203\OpenCvSharp.CPlusPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenCvSharp.DebuggerVisualizers, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6adad1e807fea099, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\workingFolder\OpenCV\OpenCvSharp-2.4.5-x86-20131203\OpenCvSharp.DebuggerVisualizers.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenCvSharp.Extensions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6adad1e807fea099, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\workingFolder\OpenCV\OpenCvSharp-2.4.5-x86-20131203\OpenCvSharp.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenCvSharp.Gpu, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6adad1e807fea099, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\workingFolder\OpenCV\OpenCvSharp-2.4.5-x86-20131203\OpenCvSharp.Gpu.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenCvSharp.MachineLearning, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6adad1e807fea099, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\workingFolder\OpenCV\OpenCvSharp-2.4.5-x86-20131203\OpenCvSharp.MachineLearning.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenCvSharp.UserInterface, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6adad1e807fea099, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\workingFolder\OpenCV\OpenCvSharp-2.4.5-x86-20131203\OpenCvSharp.UserInterface.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -113,6 +145,8 @@
     <Compile Include="AviationController.Designer.cs">
       <DependentUpon>AviationController.cs</DependentUpon>
     </Compile>
+    <Compile Include="CvLib.cs" />
+    <Compile Include="InstrumentsPanelLib.cs" />
     <Compile Include="JoypadController.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -191,6 +225,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\playback_prev_icon&amp;24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\HeadingBack.png" />
+    <Content Include="Resources\HeadingFront.png" />
+    <Content Include="Resources\OuterRing.png" />
+    <Content Include="Resources\PitchBack.png" />
+    <Content Include="Resources\PitchFront.png" />
+    <Content Include="Resources\RoleBack.png" />
+    <Content Include="Resources\RoleFront.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

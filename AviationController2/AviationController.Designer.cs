@@ -69,15 +69,17 @@ namespace AviationController2
             this.logTextBox = new System.Windows.Forms.TextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.page2Panel = new System.Windows.Forms.Panel();
+            this.panel6 = new System.Windows.Forms.Panel();
+            this.panel5 = new System.Windows.Forms.Panel();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.checkBoxDrawAtCenter = new System.Windows.Forms.CheckBox();
             this.labelAoa = new System.Windows.Forms.Label();
             this.comboBoxDecimation = new System.Windows.Forms.ComboBox();
             this.label11 = new System.Windows.Forms.Label();
             this.labelSpeedKmph = new System.Windows.Forms.Label();
             this.labelSpeedMps = new System.Windows.Forms.Label();
-            this.pictureBoxPitchSpeed = new System.Windows.Forms.PictureBox();
             this.pictureBoxYZSpeed = new System.Windows.Forms.PictureBox();
             this.pictureBoxXYSpeed = new System.Windows.Forms.PictureBox();
-            this.label14 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.labelPosition = new System.Windows.Forms.Label();
@@ -98,7 +100,7 @@ namespace AviationController2
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timerFilePlay = new System.Windows.Forms.Timer(this.components);
-            this.checkBoxDrawAtCenter = new System.Windows.Forms.CheckBox();
+            this.cameraTimer = new System.Windows.Forms.Timer(this.components);
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarJoyFlaps)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarJoyThrottle)).BeginInit();
@@ -114,7 +116,6 @@ namespace AviationController2
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.page2Panel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPitchSpeed)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxYZSpeed)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxXYSpeed)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPositionLogXZ)).BeginInit();
@@ -501,16 +502,17 @@ namespace AviationController2
             // 
             // page2Panel
             // 
+            this.page2Panel.Controls.Add(this.panel6);
+            this.page2Panel.Controls.Add(this.panel5);
+            this.page2Panel.Controls.Add(this.panel4);
             this.page2Panel.Controls.Add(this.checkBoxDrawAtCenter);
             this.page2Panel.Controls.Add(this.labelAoa);
             this.page2Panel.Controls.Add(this.comboBoxDecimation);
             this.page2Panel.Controls.Add(this.label11);
             this.page2Panel.Controls.Add(this.labelSpeedKmph);
             this.page2Panel.Controls.Add(this.labelSpeedMps);
-            this.page2Panel.Controls.Add(this.pictureBoxPitchSpeed);
             this.page2Panel.Controls.Add(this.pictureBoxYZSpeed);
             this.page2Panel.Controls.Add(this.pictureBoxXYSpeed);
-            this.page2Panel.Controls.Add(this.label14);
             this.page2Panel.Controls.Add(this.label13);
             this.page2Panel.Controls.Add(this.label10);
             this.page2Panel.Controls.Add(this.labelPosition);
@@ -527,10 +529,48 @@ namespace AviationController2
             this.page2Panel.Size = new System.Drawing.Size(1086, 708);
             this.page2Panel.TabIndex = 2;
             // 
+            // panel6
+            // 
+            this.panel6.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel6.Location = new System.Drawing.Point(859, 337);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(161, 161);
+            this.panel6.TabIndex = 15;
+            this.panel6.Paint += new System.Windows.Forms.PaintEventHandler(this.panel6_Paint);
+            // 
+            // panel5
+            // 
+            this.panel5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel5.Location = new System.Drawing.Point(859, 170);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(161, 161);
+            this.panel5.TabIndex = 15;
+            this.panel5.Paint += new System.Windows.Forms.PaintEventHandler(this.panel5_Paint);
+            // 
+            // panel4
+            // 
+            this.panel4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel4.Location = new System.Drawing.Point(859, 3);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(161, 161);
+            this.panel4.TabIndex = 14;
+            this.panel4.Paint += new System.Windows.Forms.PaintEventHandler(this.panel4Paint);
+            // 
+            // checkBoxDrawAtCenter
+            // 
+            this.checkBoxDrawAtCenter.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxDrawAtCenter.AutoSize = true;
+            this.checkBoxDrawAtCenter.Location = new System.Drawing.Point(12, 173);
+            this.checkBoxDrawAtCenter.Name = "checkBoxDrawAtCenter";
+            this.checkBoxDrawAtCenter.Size = new System.Drawing.Size(83, 22);
+            this.checkBoxDrawAtCenter.TabIndex = 13;
+            this.checkBoxDrawAtCenter.Text = "Fixed/Center";
+            this.checkBoxDrawAtCenter.UseVisualStyleBackColor = true;
+            // 
             // labelAoa
             // 
             this.labelAoa.AutoSize = true;
-            this.labelAoa.Location = new System.Drawing.Point(691, 564);
+            this.labelAoa.Location = new System.Drawing.Point(691, 400);
             this.labelAoa.Name = "labelAoa";
             this.labelAoa.Size = new System.Drawing.Size(63, 12);
             this.labelAoa.TabIndex = 12;
@@ -561,7 +601,7 @@ namespace AviationController2
             // labelSpeedKmph
             // 
             this.labelSpeedKmph.AutoSize = true;
-            this.labelSpeedKmph.Location = new System.Drawing.Point(691, 535);
+            this.labelSpeedKmph.Location = new System.Drawing.Point(691, 371);
             this.labelSpeedKmph.Name = "labelSpeedKmph";
             this.labelSpeedKmph.Size = new System.Drawing.Size(38, 12);
             this.labelSpeedKmph.TabIndex = 8;
@@ -570,21 +610,11 @@ namespace AviationController2
             // labelSpeedMps
             // 
             this.labelSpeedMps.AutoSize = true;
-            this.labelSpeedMps.Location = new System.Drawing.Point(691, 517);
+            this.labelSpeedMps.Location = new System.Drawing.Point(691, 353);
             this.labelSpeedMps.Name = "labelSpeedMps";
             this.labelSpeedMps.Size = new System.Drawing.Size(32, 12);
             this.labelSpeedMps.TabIndex = 7;
             this.labelSpeedMps.Text = "0m/s";
-            // 
-            // pictureBoxPitchSpeed
-            // 
-            this.pictureBoxPitchSpeed.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBoxPitchSpeed.Location = new System.Drawing.Point(693, 336);
-            this.pictureBoxPitchSpeed.Name = "pictureBoxPitchSpeed";
-            this.pictureBoxPitchSpeed.Size = new System.Drawing.Size(160, 160);
-            this.pictureBoxPitchSpeed.TabIndex = 6;
-            this.pictureBoxPitchSpeed.TabStop = false;
-            this.pictureBoxPitchSpeed.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBoxPitchSpeed_Paint);
             // 
             // pictureBoxYZSpeed
             // 
@@ -605,15 +635,6 @@ namespace AviationController2
             this.pictureBoxXYSpeed.TabIndex = 6;
             this.pictureBoxXYSpeed.TabStop = false;
             this.pictureBoxXYSpeed.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBoxXYSpeed_Paint);
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(634, 353);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(31, 12);
-            this.label14.TabIndex = 5;
-            this.label14.Text = "Pitch";
             // 
             // label13
             // 
@@ -734,6 +755,7 @@ namespace AviationController2
             this.pictureBoxPositionLogXY.Size = new System.Drawing.Size(450, 450);
             this.pictureBoxPositionLogXY.TabIndex = 0;
             this.pictureBoxPositionLogXY.TabStop = false;
+            this.pictureBoxPositionLogXY.Click += new System.EventHandler(this.pictureBoxPositionLogXY_Click);
             this.pictureBoxPositionLogXY.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBoxPositionLogXY_Paint);
             // 
             // toolStrip1
@@ -810,16 +832,9 @@ namespace AviationController2
             this.timerFilePlay.Interval = 10;
             this.timerFilePlay.Tick += new System.EventHandler(this.timerFilePlay_Tick);
             // 
-            // checkBoxDrawAtCenter
+            // cameraTimer
             // 
-            this.checkBoxDrawAtCenter.Appearance = System.Windows.Forms.Appearance.Button;
-            this.checkBoxDrawAtCenter.AutoSize = true;
-            this.checkBoxDrawAtCenter.Location = new System.Drawing.Point(12, 173);
-            this.checkBoxDrawAtCenter.Name = "checkBoxDrawAtCenter";
-            this.checkBoxDrawAtCenter.Size = new System.Drawing.Size(83, 22);
-            this.checkBoxDrawAtCenter.TabIndex = 13;
-            this.checkBoxDrawAtCenter.Text = "Fixed/Center";
-            this.checkBoxDrawAtCenter.UseVisualStyleBackColor = true;
+            this.cameraTimer.Tick += new System.EventHandler(this.cameraTimer_Tick);
             // 
             // AviationController
             // 
@@ -857,7 +872,6 @@ namespace AviationController2
             this.tabPage2.ResumeLayout(false);
             this.page2Panel.ResumeLayout(false);
             this.page2Panel.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPitchSpeed)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxYZSpeed)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxXYSpeed)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPositionLogXZ)).EndInit();
@@ -934,11 +948,13 @@ namespace AviationController2
         private Label label11;
         private Label label12;
         private ComboBox comboBoxScaleZ;
-        private PictureBox pictureBoxPitchSpeed;
         private Label labelAoa;
-        private Label label14;
         private Label label13;
         private CheckBox checkBoxDrawAtCenter;
+        private Timer cameraTimer;
+        private Panel panel4;
+        private Panel panel6;
+        private Panel panel5;
     }
 }
 
